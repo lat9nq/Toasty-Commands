@@ -1,0 +1,54 @@
+<h1>Toasty-Commands</h1>
+
+<p>This is where the port of the chat commands my E2 ToastyHUD will be held.</p>
+
+<p>This is a Module for ULX (which can be found <a href="https://github.com/TeamUlysses/ulx">here</a>). Thus, this addon requires that you have ULX installed.</p>
+
+<p>A number of functions are added to ULX, most extend or use functions defined in ULX. These functions are as follows:</p>
+
+<ul>
+<li>rm &lt;player&gt; &#91;time in seconds, default is 0&#93;
+<ul>
+<li>Deletes all the entities of player, and jails them for a set amount of time.</li>
+</ul></li>
+<li>sgoto &lt;player&gt;
+<ul>
+<li>Teleports the user to the selected player, without relay in chat.</li>
+</ul></li>
+<li>sstrip &lt;player&gt;
+<ul>
+<li>Strips the weapons of the player, without relay in chat.</li>
+</ul></li>
+<li>tgag &lt;player&gt; &#91;time in seconds, default is 60&#93;
+<ul>
+<li>Gags the selected player for the specified number of seconds.</li>
+</ul></li>
+<li>tmute &lt;player&gt; &#91;time in seconds, default is 60&#93;
+<ul>
+<li>Mutes the selected player for the specified number of seconds.</li>
+</ul></li>
+<li>playwith &lt;player&gt; &#91;time in seconds, default is 0&#93;
+<ul>
+<li>Performs a number of ULX commands on the target, specifically:
+<ul>
+<li>ulx unjail</li>
+<li>ulx bring</li>
+<li>ulx ragdoll</li>
+<li>ulx gag</li>
+<li>ulx mute</li>
+</ul></li>
+<li>It performs those action in that order</li>
+<li>Provides an opposite (ulx unplaywith, say !unplaywith)</li>
+</ul></li>
+<li>dscban &lt;player&gt; &#91;time in seconds, default is 0 (perma)&#93; &#91;reason&#93;
+<ul>
+<li>Sets up a ban. When the player disconnects, it automatically bans them.</li>
+<li>Provides an opposite (ulx undscban, say !undscban)</li>
+</ul></li>
+<li>fu &lt;player&gt;
+<ul>
+<li>Inverts the viewport of the player.</li>
+<li>Garry's Mod will reset the viewport when the player respawns.</li>
+<li>Provides an opposite (ulx unfu, say !unfu)</li>
+</ul></li>
+</ul>
