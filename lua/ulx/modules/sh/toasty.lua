@@ -148,7 +148,7 @@ hook.Add("PlayerDisconnected", "Toast_Ban_On_Disconnect", function(ply)
 	local caller = to_ban_callers[tag]
 	local id = to_ban_ids[tag]
 	local time = to_ban_times[tag]
-	local reason = to_ban_reasons[reason]
+	local reason = to_ban_reasons[tag]
 
 	local tstring = "for #s"
 	if (time == 0) then
