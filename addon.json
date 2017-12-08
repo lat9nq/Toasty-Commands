@@ -4,11 +4,13 @@
 	"tags"	:	[ "fun" ],
 	"ignore"	:
 	[
-		"README",
-		".gitignore",
-		".git",
 		"LICENSE",
+		"README.md",
+		".gitignore",
+		".git/*",
+		".git",
 		"*.xcf",
-		"*.jpg"
+		"*.jpg",
+		"*.swp"
 	]
 }

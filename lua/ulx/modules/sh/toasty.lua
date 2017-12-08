@@ -48,7 +48,7 @@ function toast.temp_gag(caller, target, time)
 	target:SetNWBool("ulx_gagged", false)
 
 	timer.Create("temp_gag_"..target:GetName()..tostring(math.floor(SysTime())), time, 1, function()
-		if (target.ulx_gagged) then
+		if (target:IsValid() and target.ulx_gagged) then
 			target.ulx_gagged = false
 			target:SetNWBool("ulx_gagged", false)
 			ulx.fancyLogAdmin(caller, "Ungagged #T", target)
@@ -71,7 +71,7 @@ function toast.temp_mute(caller, target, time)
 	target:SetNWBool("ulx_muted", false)
 
 	timer.Create("temp_mute_"..target:GetName()..tostring(math.floor(SysTime())), time, 1, function()
-		if (target.gimp != 0) then
+		if (target:IsValid() and target.gimp != 0) then
 			target.gimp = 0
 			target:SetNWBool("ulx_muted", false)
 			ulx.fancyLogAdmin(caller, "Unmuted #T", target)
@@ -92,6 +92,9 @@ function toast.playwith(caller, target, time, should_stop)
 	if (!should_stop) then
 		ulx.jail(caller, targets, 0, true)
 		ulx.bring(caller, targets)
+	end
+	if not target:Alive() then
+		ULib.spawn(target)
 	end
 	ulx.ragdoll(caller, targets, should_stop)
 	ulx.gag(caller, targets, should_stop)
