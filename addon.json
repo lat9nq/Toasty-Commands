@@ -1,0 +1,14 @@
+{
+	"title"	:	"Toasty-Commands",
+	"type"	:	"tool",
+	"tags"	:	[ "fun" ],
+	"ignore"	:
+	[
+		"README",
+		".gitignore",
+		".git",
+		"LICENSE",
+		"*.xcf",
+		"*.jpg"
+	]
+}
