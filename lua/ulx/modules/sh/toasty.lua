@@ -91,9 +91,9 @@ function toast.playwith(caller, target, time, should_stop)
 
 	if (!should_stop) then
 		ulx.jail(caller, targets, 0, true)
-		ulx.bring(caller, targets)
+		--ulx.bring(caller, targets)
 	end
-	if not target:Alive() then
+	if target:Health() <= 0 then
 		ULib.spawn(target)
 	end
 	ulx.ragdoll(caller, targets, should_stop)
@@ -143,7 +143,7 @@ hook.Add("PlayerDisconnected", "Toast_Ban_On_Disconnect", function(ply)
 	local tag = tonumber(getTag(ply))
 
 	if (ply:IsListenServerHost() or ply:IsBot()) then return end
-	if (to_ban_revoked[tag] == nil or to_ban_revoked[tag] == false) then return end
+	if (to_ban_revoked[tag] == nil or to_ban_revoked[tag] == true) then return end
 
 	local caller = to_ban_callers[tag]
 	local id = to_ban_ids[tag]
