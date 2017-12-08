@@ -163,7 +163,7 @@ hook.Add("PlayerDisconnected", "Toast_Ban_On_Disconnect", function(ply)
 	--Some of this code was pulled from ULX
 	ulx.fancyLogAdmin(caller, "#A banned <#s> " .. tstring .. rsn .. " on disconnect.",
 			id,
-			minutes ~= 0 and ULib.secondsToStringTime( minutes * 60 ) or reason,
+			time ~= 0 and ULib.secondsToStringTime( time * 60 ) or reason,
 			reason
 	)
 
