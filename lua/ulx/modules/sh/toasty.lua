@@ -174,14 +174,12 @@ function toast.disconnect_ban(caller, target, time, reason, undo)
 	local tag = tonumber(getTag(target))
 
 	if not undo then
-		if (reason) then
-			to_ban_reasons[tag] = reason
-		end
 		if (target:IsValid() and !target:IsBot()) then
 			to_ban_ids[tag] = target:SteamID()
 		else
 			to_ban_ids[tag] = "0"
 		end
+		to_ban_reasons[tag] = reason
 		to_ban_times[tag] = time
 		to_ban_revoked[tag] = false
 		to_ban_callers[tag] = caller
