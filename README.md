@@ -31,3 +31,10 @@ A number of functions are added to ULX, most extend or use functions defined in 
 	- Inverts the viewport of the player.
 	- Garry's Mod will reset the viewport when the player respawns.
 	- Provides an opposite (ulx unfu, say !unfu)
+- alle2s
+	- Prints all of the Expression 2 chips spawned in the server.
+	- Includes the user, Expression name, OP usage, and CPU usage (in us)
+- delete
+	- Unimplemented
+	- Supposed to delete the player
+	- Currently prints a funny-looking message in the logs
