@@ -237,3 +237,31 @@ fu:defaultAccess(ULib.ACCESS_ADMIN)
 fu:help("Inverts the viewport for the target. Resets when they die.")
 fu:setOpposite("ulx unfu", { _, _, true }, "!unfu")
 
+function toast.alle2s(caller)
+	local es = ents.GetAll()
+
+	for _, e in pairs(es) do
+		if (e:GetClass() == "gmod_wire_expression2") then
+			if (e:IsValid() and e.GetGateName) then
+				if (e.FPPOwnerID) then
+					caller:PrintMessage(HUD_PRINTTALK, player.GetBySteamID(e.FPPOwnerID):GetName() ..
+						"'s " .. e:GetGateName() .. ": using " ..
+						tostring(math.floor(e.context.prfbench)) .. " ops, " .. tostring(math.floor(1000000 * e.context.timebench)) .. " us")
+				end
+			end
+		end
+	end
+end
+local alle2s = ulx.command(CATEGORY_NAME, "ulx alle2s", toast.alle2s, "!alle2s", true)
+alle2s:defaultAccess(ULib.ACCESS_OPERATOR)
+alle2s:help("Prints out all the Expression 2 chips spawned in the server.")
+
+function toast.delete(caller, target)
+	ulx.fancyLogAdmin(caller, "#A deleted #T", target)
+
+	--target:Remove()
+end
+local del = ulx.command(CATEGORY_NAME, "ulx delete", toast.delete, "!delete")
+del:addParam{ type=ULib.cmds.PlayerArg }
+del:defaultAccess(ULib.ACCESS_ADMIN)
+del:help("Deletes the player from the server.")
