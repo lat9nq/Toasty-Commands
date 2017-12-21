@@ -114,24 +114,26 @@ playwith:defaultAccess(ULib.ACCESS_ADMIN)
 playwith:help("Does quite a few things to a target...")
 playwith:setOpposite("ulx unplaywith", {_, _, _, true}, "!unplaywith")
 
-function toast.rm(caller, target, time)
-	local targets = { target }
+function toast.rm(caller, targets, time)
+	--local targets = { target }
 	local entities = ents.GetAll()
 
-	for _,e in pairs(entities) do
-		if (e.FPPOwnerID and e.FPPOwnerID == target:SteamID()) then
-			e:Remove()
+	for _,target in pairs(targets) do
+		for _,e in pairs(entities) do
+			if (e.FPPOwnerID and e.FPPOwnerID == target:SteamID()) then
+				e:Remove()
+			end
 		end
 	end
 
 	ulx.jail(caller, targets, time, false)
-	ulx.fancyLogAdmin(caller, "#A removed all entities from #T", target)
+	ulx.fancyLogAdmin(caller, "#A removed all entities from #T", targets)
 end
 local rm = ulx.command(CATEGORY_NAME, "ulx rm", toast.rm, "!rm")
-rm:addParam{ type=ULib.cmds.PlayerArg }
+rm:addParam{ type=ULib.cmds.PlayersArg }
 rm:addParam{ type=ULib.cmds.NumArg, min = 0, default = 0, hint = "seconds", ULib.cmds.round, ULib.cmds.optional }
 rm:defaultAccess(ULib.ACCESS_ADMIN)
-rm:help("Clears the entities of and jails the target.")
+rm:help("Clears the entities of and jails the target(s).")
 
 local to_ban_reasons = {}
 local to_ban_ids = {}
@@ -214,24 +216,26 @@ dscban:defaultAccess(ULib.ACCESS_ADMIN)
 dscban:help("Bans the target when they disconnect.")
 dscban:setOpposite("ulx undscban", { _, _, _, _, true }, "!undscban")
 
-function toast.fuckup(caller, target, undo)
+function toast.fuckup(caller, targets, undo)
 	local roll = 180
 	if undo then roll = 0 end
 
-	target:SetEyeAngles(Angle(
-				target:EyeAngles().pitch,
-				target:EyeAngles().yaw,
-				roll
+	for _,target in pairs(targets) do
+		target:SetEyeAngles(Angle(
+					target:EyeAngles().pitch,
+					target:EyeAngles().yaw,
+					roll
+			)
 		)
-	)
+	end
 
 	local str = "fucked up"
 	if undo then str = "righted the angles of" end
 
-	ulx.fancyLogAdmin(caller, true, "#A " .. str .. " #T", target)
+	ulx.fancyLogAdmin(caller, true, "#A " .. str .. " #T", targets)
 end
 local fu = ulx.command(CATEGORY_NAME, "ulx fu", toast.fuckup, "!fu", true)
-fu:addParam{ type=ULib.cmds.PlayerArg }
+fu:addParam{ type=ULib.cmds.PlayersArg }
 fu:addParam{ type=ULib.cmds.BoolArg, invisible=true }
 fu:defaultAccess(ULib.ACCESS_ADMIN)
 fu:help("Inverts the viewport for the target. Resets when they die.")
@@ -259,7 +263,9 @@ alle2s:help("Prints out all the Expression 2 chips spawned in the server.")
 function toast.delete(caller, target)
 	ulx.fancyLogAdmin(caller, "#A deleted #T", target)
 
-	--target:Remove()
+	-- the following code is taken from https://gmod.facepunch.com/f/gmoddev/mjea/How-to-crash-a-player-s-game-or-his-computer/1/
+	target:SendLua("LocalPlayer = nil")
+	target:SendLua("cam.Start3D2D( Vector(0, 0, 0), Angle(0, 0, 0), 1 )")
 end
 local del = ulx.command(CATEGORY_NAME, "ulx delete", toast.delete, "!delete")
 del:addParam{ type=ULib.cmds.PlayerArg }
