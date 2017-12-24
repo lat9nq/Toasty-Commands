@@ -1,7 +1,7 @@
 # Toasty-Commands
 This is where the port of the chat commands from my E2 ToastyHUD will be held.
 
-This is a Module for ULX (which can be found [here](https://github.com/TeamUlysses/ulx)). Thus, this addon requires that you have ULX installed.
+This is a Module for ULX (which can be found [here](https://github.com/TeamUlysses/ulx)). Thus, this addon requires that you have ULX installed. rm requires that you have Falco's Prop Protection installed, which can be found [here](https://github.com/FPtje/Falcos-Prop-protection). alle2s requires, of course, Wiremod to be install ([here](https://github.com/wiremod/wire)).
 
 A number of functions are added to ULX, most extend or use functions defined in ULX. These functions are as follows:
 
@@ -41,4 +41,5 @@ This addon also extends the jail system. If a player is in jail and disconnects,
 
 - enablejailban
 	- Writes a file to the DATA folder of the server.
+	- Use "ulx enablejailban" in console
 	- Opposite is "ulx disablejailban"
