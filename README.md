@@ -35,6 +35,10 @@ A number of functions are added to ULX, most extend or use functions defined in 
 	- Prints all of the Expression 2 chips spawned in the server.
 	- Includes the user, Expression name, OP usage, and CPU usage (in us)
 - delete
-	- Unimplemented
-	- Supposed to delete the player
-	- Currently prints a funny-looking message in the logs
+	- Deletes the player (clientside)
+
+This addon also extends the jail system. If a player is in jail and disconnects, it notifies all the users on the server. This addon is also capable of auto-banning for leave during jail. If the player reconnects within 24 hours of leaving during the jail, they are banned for the remainder of the 24 hours. By default, this feature is turned off, but there is a command to enable it:
+
+- enablejailban
+	- Writes a file to the DATA folder of the server.
+	- Opposite is "ulx disablejailban"

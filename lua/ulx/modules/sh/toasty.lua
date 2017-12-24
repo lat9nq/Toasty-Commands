@@ -269,5 +269,80 @@ function toast.delete(caller, target)
 end
 local del = ulx.command(CATEGORY_NAME, "ulx delete", toast.delete, "!delete")
 del:addParam{ type=ULib.cmds.PlayerArg }
-del:defaultAccess(ULib.ACCESS_ADMIN)
+del:defaultAccess(ULib.ACCESS_SUPERADMIN)
 del:help("Deletes the player from the server.")
+
+
+
+local disconnect_jail_list = {}
+toast_auto_ban = false
+local toastab_filename = "toast_auto_ban"
+
+hook.Add("PlayerDisconnected", "DidTheyLeaveFromJail", function(ply)
+	if (ply.jail) then
+		ULib.tsay(nil, ply:GetName() .. "<" .. ply:SteamID() .. "> has left the server while jailed!")
+
+		if (toast_auto_ban) then
+			local tag = GetTag(ply)
+
+			disconnect_jail_list[tag] = SysTime()
+		end
+	end
+end)
+
+hook.Add("PlayerInitialSpawn", "DidTheyLeaveJailAndReconnect", function(ply)
+	if (toast_auto_ban) then
+		local tag = GetTag(ply)
+		local time = disconnect_jail_list[tag]
+		local diff = SysTime() - time
+		if (diff < 86400) then
+			ulx.ban(ply, ply, math.ceil((86400 - diff)/60), "Reconnected to evade jail.")
+		end
+	end
+end)
+
+function toast.enablejailban(caller, unset)
+	toast_auto_ban = not unset
+	local str = "#A "
+
+	local f = file.Open(toastab_filename, "w", "DATA")
+
+	if (unset) then
+		f:Write("0")
+		str = str .. "disabled"
+	else
+		f:Write("1")
+		str = str .. "enabled"
+	end
+	str = str .. " auto-ban for disconnect from jail."
+
+	f:Close()
+	f = nil
+
+	ulx.fancyLogAdmin(caller, str)
+end
+local ejb = ulx.command(CATEGORY_NAME, "ulx enablejailban", toast.enablejailban, nil)
+ejb:addParam{ type=ULib.cmds.BoolArg, invisible = true }
+ejb:defaultAccess(ULib.ACCESS_SUPERADMIN)
+ejb:help("Enables/Disables auto-banning for leaving during jail.")
+ejb:setOpposite("ulx disablejailban", {_, true}, nil)
+
+hook.Add( "InitPostEntity", "load_toastab", function()
+	local f = file.Open(toastab_filename, "r", "DATA")
+
+	if (f == nil) then --if the file doesnt exist, write it
+		f = file.Open(toastab_filename, "w", "DATA")
+		f:Write("0")
+		f:Close()
+		return
+	end
+
+	local r = f:Read(1) --else, decide if we are allowing auto-banning
+	if (r == "0") then
+		toast_auto_ban = false
+	else
+		toast_auto_ban = true
+	end
+	f:Close()
+end)
+
