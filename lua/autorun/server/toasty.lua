@@ -117,7 +117,7 @@ concommand.Add("jailstat", function(caller)
 	if not caller:IsValid() then
 		print(str)
 	else
-		caller:PrintMessage(HUD_PRINTCONOSOLE, str)
+		caller:PrintMessage(HUD_PRINTCONSOLE, str)
 	end
 end)
 
