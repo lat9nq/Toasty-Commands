@@ -32,7 +32,7 @@ end
 local my_timer = "check_jail"
 local delay = 1.0
 
-local function updateTimer(count)
+local function updateTabTimer(count)
 	if (count == 0) then
 		timer.Remove(my_timer)
 	else
@@ -71,7 +71,7 @@ local function load_tab()
 	f:Close()
 end
 
---updateTimer(player.GetCount())
+--updateTabTimer(player.GetCount())
 hook.Add("InitPostEntity", "load_toast_auto-ban", function()
 	print("TAB: Loading...")
 	load_tab()
@@ -91,12 +91,12 @@ hook.Add("InitPostEntity", "load_toast_auto-ban", function()
 			end
 		end
 
-		updateTimer(player.GetCount() - 1)
+		updateTabTimer(player.GetCount() - 1)
 	end)
 
 	print("TAB: Adding connect hook...")
 	hook.Add("PlayerInitialSpawn", "IsJailRecon", function(ply)
-		updateTimer(player.GetCount())
+		updateTabTimer(player.GetCount())
 		if (toast_auto_ban) then
 			local tag = getTag(ply)
 			local dsctime = disconnect_jail_list[tag]
