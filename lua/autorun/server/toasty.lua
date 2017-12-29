@@ -121,3 +121,22 @@ concommand.Add("jailstat", function(caller)
 	end
 end)
 
+--~~~~~~ From toast sort
+
+hook.Add("PlayerSay", "toastSort", function(ply, strText, bTeam)
+	if (ply.sort and not ply:GetNWBool("ulx_gimped") and not ply:GetNWBool("ulx_muted")) then
+		local result = ""
+		local c = string.char(0)
+		for i = 32, 126 do
+			c = string.char(i)
+			for j = 1, string.len(strText) do
+				local x = string.sub(strText, j, j)
+				if (c == x) then
+					result = result .. x
+				end
+			end
+		end
+		return result
+	end
+end)
+

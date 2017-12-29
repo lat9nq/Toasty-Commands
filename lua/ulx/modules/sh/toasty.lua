@@ -298,3 +298,33 @@ ejb:addParam{ type=ULib.cmds.BoolArg, invisible = true }
 ejb:defaultAccess(ULib.ACCESS_SUPERADMIN)
 ejb:help("Enables/Disables auto-banning for leaving during jail.")
 ejb:setOpposite("ulx disablejailban", {_, true}, nil)
+
+function toast.sort(caller, target, unset)
+	local changed = false
+
+	if not target.sort and not unset then
+		changed = true
+		target.sort = true
+	elseif unset then
+		changed = true
+		target.sort = nil
+	end
+
+	if changed then
+		local str = "#A"
+		if unset then
+			str = str .. " unsorted "
+		else
+			str = str .. " sorted "
+		end
+		str = str .. "#T"
+		ulx.fancyLogAdmin(caller, str, target)
+	end
+end
+local sort = ulx.command(CATEGORY_NAME, "ulx sort", toast.sort, "!sort")
+sort:addParam{ type=ULib.cmds.PlayerArg }
+sort:addParam{ type=ULib.cmds.BoolArg, invisible=true }
+sort:defaultAccess(ULib.ACCESS_ADMIN)
+sort:help("Sorts the player's text in chat.")
+sort:setOpposite("ulx unsort", {_, _, true}, "!unsort")
+
