@@ -328,3 +328,110 @@ sort:defaultAccess(ULib.ACCESS_ADMIN)
 sort:help("Sorts the player's text in chat.")
 sort:setOpposite("ulx unsort", {_, _, true}, "!unsort")
 
+function toast.pmute(caller, targets, unpmute)
+	local val = !unpmute
+	if unpmute == true then val = nil end
+	for _, p in pairs(targets) do
+		if (p:IsValid()) then
+			p:SetPData("permmuted", val)
+			p.perma_muted = val
+		end
+	end
+
+	local str = "#A "
+	if (unpmute) then
+		str = str .. "un-"
+	end
+	str = str .. "permanently muted #T"
+
+	ulx.fancyLogAdmin(caller, str, targets)
+end
+local pmute = ulx.command(CATEGORY_NAME, "ulx pmute", toast.pmute, "!pmute")
+pmute:addParam{ type=ULib.cmds.PlayersArg }
+pmute:addParam{ type=ULib.cmds.BoolArg, invisible=true }
+pmute:defaultAccess(ULib.ACCESS_ADMIN)
+pmute:help("Mutes the targets using pdata")
+pmute:setOpposite("ulx unpmute", {_, _, true}, "!unpmute")
+
+hook.Add("PlayerInitialSpawn", "TAM_IsPMuted", function(ply)
+	if (ply:GetPData("permmuted") == true) then
+		for _, p in pairs(player.GetAll()) do
+			if p:IsAdmin() then
+				ULib.tsayError(p, ply:GetName() .. " has joined the server and is permanently muted!")
+			end
+		end
+	end
+	ply.perm_muted = true
+end)
+
+hook.Add("PlayerDisconnected", "TAM_IsPMuted_Disconnect", function(ply)
+	if (ply.perma_muted) then
+		for _, p in pairs(player.GetAll()) do
+			if p:IsAdmin() then
+				ULib.tsayError(p, ply:GetName() .. " has left the server and is permanently muted!")
+			end
+		end
+	end
+end)
+
+hook.Add("PlayerSay", "TAM_PMuteSay", function(ply)
+	if (ply.perma_muted) then
+		return ""
+	end
+end)
+
+function toast.pgag(caller, targets, unpgag)
+	local val = !unpgag
+	if unpgag == true then val = nil end
+	for _, p in pairs(targets) do
+		if (p:IsValid()) then
+			p:SetPData("permgagged", val)
+			p.perma_gagged = val
+		end
+	end
+
+	local str = "#A "
+	if (unpgag) then
+		str = str .. "un-"
+	end
+	str = str .. "permanently gagged #T"
+
+	ulx.fancyLogAdmin(caller, str, targets)
+end
+local pgag = ulx.command(CATEGORY_NAME, "ulx pgag", toast.pgag, "!pgag")
+pgag:addParam{ type=ULib.cmds.PlayersArg }
+pgag:addParam{ type=ULib.cmds.BoolArg, invisible=true }
+pgag:defaultAccess(ULib.ACCESS_ADMIN)
+pgag:help("Gags the targets using pdata")
+pgag:setOpposite("ulx unpgag", {_, _, true}, "!unpgag")
+
+hook.Add("PlayerInitialSpawn", "TAM_IsPGagged", function(ply)
+	if (ply:GetPData("permgagged") == true) then
+		for _, p in pairs(player.GetAll()) do
+			if p:IsAdmin() then
+				ULib.tsayError(p, ply:GetName() .. " has joined the server and is permanently gagged!")
+			end
+		end
+	end
+	ply.perm_gagged = true
+end)
+
+hook.Add("PlayerDisconnected", "TAM_IsPGagged_Disconnect", function(ply)
+	if (ply.perma_gagged) then
+		for _, p in pairs(player.GetAll()) do
+			if p:IsAdmin() then
+				ULib.tsayError(p, ply:GetName() .. " has left the server and is permanently gagged!")
+			end
+		end
+	end
+end)
+
+-- the following was referenced from Custom ULX Commands by Cobalt77
+
+hook.Add("PlayerCanHearPlayersVoice", "TAM_PGagTalk", function(listener, talker)
+	if (talker.perma_gagged) then
+		return false
+	end
+end)
+
+

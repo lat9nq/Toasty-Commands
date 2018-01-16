@@ -79,7 +79,7 @@ hook.Add("InitPostEntity", "load_toast_auto-ban", function()
 	print("TAB: Adding disconnect hook...")
 	hook.Add("PlayerDisconnected", "DidTheyLeaveFromJail", function(ply)
 		--print("meow")
-		if (ply.toastjail) then
+		if (ply.toastjail) and ply:IsAdmin() then
 			local msg = ply:GetName() .. "<" .. ply:SteamID() .. "> has left the server while jailed!"
 			ULib.tsay(nil, msg)
 			print(msg)
