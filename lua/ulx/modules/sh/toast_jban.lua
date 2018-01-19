@@ -76,4 +76,11 @@ local function player_join(ply)
 end
 
 hook.Add("PlayerInitialSpawn", "JBan_Register_Spawn", player_join)
-concommand.Add("addme", player_join)
+
+hook.Add("InitPostEntity", "LoadJBanRecords", function()
+			local f = file.Open(file_name, "r", "DATA")
+
+			local size = f:Size()
+			joins = util.JSONToTable(f:Read(size))
+		end)
+

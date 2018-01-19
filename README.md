@@ -7,6 +7,10 @@ This addon now includes an anti-cheat. It will watch for client-side changes to 
 
 A number of functions are added to ULX, most extend or use functions defined in ULX. These functions are as follows:
 
+- jban
+	- Loads an interface with which one can ban other players with.
+	- Records joins and deletes records that are older than 24 hours.
+	- Records are saved to a file.
 - rm &lt;player(s)&gt; &#91;time in seconds, default is 0&#93;
 	- Deletes all the entities of player(s), and jails them for a set amount of time.
 - sgoto &lt;player&gt;
