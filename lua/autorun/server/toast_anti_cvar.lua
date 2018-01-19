@@ -28,7 +28,11 @@ end
 
 concommand.Add(com_name, function(ply, cmd, args, argStr)
 	local str = "Manipulated console variable " .. argStr
-	ulx.ban(ply, ply, ban_length, str)
+	if (not ply:IsAdmin()) then
+		ulx.ban(ply, ply, ban_length, str)
+	else
+		ULib.tsayError(nil, ply:GetName() .. " manipulated console variable " .. argStr)
+	end
 	--print(ply:GetName() .. ": " .. str)
 end)
 

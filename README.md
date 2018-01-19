@@ -3,7 +3,7 @@ This is where the port of the chat commands from my E2 ToastyHUD will be held, i
 
 This is a Module for ULX (which can be found [here](https://github.com/TeamUlysses/ulx)). Thus, this addon requires that you have ULX installed. rm requires that you have Falco's Prop Protection installed, which can be found [here](https://github.com/FPtje/Falcos-Prop-protection). alle2s requires, of course, Wiremod to be install ([here](https://github.com/wiremod/wire)).
 
-This addon now includes an anti-cheat. It will watch for client-side changes to the cvars sv\_allowcslua, sv\_cheats, and mat\_wireframe, and auto-bans for a week if it sees fit.
+This addon now includes an anti-cheat. It will watch for client-side changes to the cvars sv\_allowcslua, sv\_cheats, and mat\_wireframe, and auto-bans for a week if it sees fit. Avoids banning admins, instead it notifies the server of the detection.
 
 A number of functions are added to ULX, most extend or use functions defined in ULX. These functions are as follows:
 
