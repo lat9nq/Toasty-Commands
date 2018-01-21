@@ -1,13 +1,24 @@
-local CATEGORY_NAME = "Toasty"
-local joins = {}
+toast = {}
+joins = {}
 local file_name = "toast_jban.txt"
-local toast = {}
+local CATEGORY_NAME = "Toasty"
+local message_name = "toast_jban"
+
+local function num_to_ascii(s)
+	local c
+	local str = ""
+	for i = 1, string.len(s) do
+		c = string.sub(s, i, i)
+		str = str .. string.char(65 + tonumber(c))
+	end
+	return str
+end
 
 function toast.jban(caller)
-	local key = ""
+	--[[local key = ""
 	local c = ""
 	math.randomseed((SysTime() - math.floor(SysTime()))*1000000)
-	for i=1, 64 do
+	for i=1, 32 do
 		if (math.random(0,2) == 1) then
 			c = string.char(math.random(65,90))
 		elseif (math.random(0,1) == 1) then
@@ -18,13 +29,11 @@ function toast.jban(caller)
 		key = key .. c
 	end
 	caller:SendLua("RunConsoleCommand(\"toast_jban\", \"" .. key .. "\")")
-	--print(key)
-
-	caller:SetNWInt(key, table.Count(joins))
-	for i, x in pairs(joins) do
-		local str = util.TableToJSON(x)
-		caller:SetNWString(key .. tostring(i), str)
-	end
+	]]
+	net.Start(message_name)
+	net.WriteString(util.TableToJSON(joins))
+	--PrintTable(joins)
+	net.Send(caller)
 end
 local jban = ulx.command(CATEGORY_NAME, "ulx jban", toast.jban, "!jban", true)
 jban:defaultAccess(ULib.ACCESS_ADMIN)
@@ -35,6 +44,9 @@ local function player_join(ply)
 		return
 	end
 	local ip = ply:IPAddress()
+	if string.find(ip, ":") then
+		ip = string.sub(ip, 1, string.find(ip, ":")-1)
+	end
 	local name = ply:GetName()
 	local id = ply:SteamID()
 	local join_time = os.time()
@@ -76,11 +88,4 @@ local function player_join(ply)
 end
 
 hook.Add("PlayerInitialSpawn", "JBan_Register_Spawn", player_join)
-
-hook.Add("InitPostEntity", "LoadJBanRecords", function()
-			local f = file.Open(file_name, "r", "DATA")
-
-			local size = f:Size()
-			joins = util.JSONToTable(f:Read(size))
-		end)
 

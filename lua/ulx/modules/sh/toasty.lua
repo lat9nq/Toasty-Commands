@@ -1,5 +1,4 @@
 local CATEGORY_NAME = "Toasty"
-
 toast = {}
 
 local function getTag(ply)
@@ -433,5 +432,4 @@ hook.Add("PlayerCanHearPlayersVoice", "TAM_PGagTalk", function(listener, talker)
 		return false
 	end
 end)
-
-
+-- end reference

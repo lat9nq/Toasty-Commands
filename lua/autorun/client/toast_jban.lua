@@ -17,13 +17,11 @@
 	jban can serve as a sufficient replacement for dban.
 ]]
 
-
-concommand.Add("toast_jban", function(caller, cmd, args)
-	if (!caller:IsAdmin() or !caller:IsValid()) then
-		return
-	end
-	local key = args[1]
-	timer.Create("load_jban", 0.5, 1, function()
+--concommand.Add("toast_jban", function(caller, cmd, args)
+local message_name = "toast_jban"
+net.Receive(message_name, function(msg_length, caller)
+	--local key = args[1]
+	--timer.Create("load_jban", 0.1, 1, function()
 		local jban_frame = vgui.Create("DFrame")
 		jban_frame:SetTitle("JBan")
 		jban_frame:SetSize(640, 480)
@@ -35,34 +33,27 @@ concommand.Add("toast_jban", function(caller, cmd, args)
 		local list = vgui.Create("DListView", jban_frame)
 		list:Dock(FILL)
 		list:SetMultiSelect(false)
-		list:AddColumn("id")
 		list:AddColumn("SteamID")
 		list:AddColumn("Name")
 		list:AddColumn("Last Joined")
 		list:AddColumn("IP Address")
 
-		local count = caller:GetNWInt(key)
-		--print(count)
-		--print(key)
+		local record = nil
 
-		local record = {}
-
-		for i=1, count do
-			record = util.JSONToTable(caller:GetNWString(key .. tostring(i)))
-			--print(":" .. caller:GetNWString(key .. i))
-			list:AddLine(i, record.id, record.name, record.join_time_s, record.ip)
+		local joins = util.JSONToTable(net.ReadString())
+		for i, x in pairs(joins) do
+			list:AddLine(x.id, x.name, x.join_time_s, x.ip)
 		end
 
-		list:SortByColumn(4, true)
+		list:SortByColumn(3, true)
 
-		list.OnRowRightClick = function(_, line_num, dline_bad)
+		list.OnRowRightClick = function(_, line_num, dline)
 			local menu = vgui.Create("DMenu")
-			local dline = list:GetLine(line_num)
 			local id = dline:GetValue(1)
-			record = util.JSONToTable(caller:GetNWString(key..tostring(id)))
+			local ip = dline:GetValue(4)
 
 			local opensp = menu:AddOption("Open Steam Profile", function()
-						local id64 = util.SteamIDTo64(record.id)
+						local id64 = util.SteamIDTo64(id)
 						gui.OpenURL("http://steamcommunity.com/profiles/"..id64)
 					end)
 			opensp:SetIcon("icon16/link.png")
@@ -72,9 +63,9 @@ concommand.Add("toast_jban", function(caller, cmd, args)
 				banframe:SetSize(256, 128)
 				banframe:Center()
 				if (id_banning) then
-					banframe:SetTitle("Ban ID " .. record.id)
+					banframe:SetTitle("Ban ID " .. id)
 				else
-					banframe:SetTitle("Ban IP " .. record.ip)
+					banframe:SetTitle("Ban IP " .. ip)
 				end
 				banframe:SetDraggable(true)
 				banframe:SetSizable(false)
@@ -101,9 +92,9 @@ concommand.Add("toast_jban", function(caller, cmd, args)
 				ban_button:SetSize(246, 25)
 				ban_button.DoClick = function()
 					if (id_banning) then
-						RunConsoleCommand("ulx", "banid", record.id, time_entry:GetValue(), reason_entry:GetValue())
+						RunConsoleCommand("ulx", "banid", id, time_entry:GetValue(), reason_entry:GetValue())
 					else
-						RunConsoleCommand("ulx", "banip", record.ip, time_entry:GetValue())
+						RunConsoleCommand("ulx", "banip", ip, time_entry:GetValue())
 					end
 					banframe:Close()
 				end
@@ -115,7 +106,8 @@ concommand.Add("toast_jban", function(caller, cmd, args)
 			banid:SetIcon("icon16/bug_delete.png")
 
 			local copyip = menu:AddOption("Copy IP Address", function()
-						SetClipboardText(record.ip)
+						--print("IP Address copied to clipboard")
+						SetClipboardText(ip)
 					end)
 			copyip:SetIcon("icon16/page_copy.png")
 
@@ -126,6 +118,6 @@ concommand.Add("toast_jban", function(caller, cmd, args)
 
 			menu:Open()
 		end
-	end)
+	--end)
 end)
 
