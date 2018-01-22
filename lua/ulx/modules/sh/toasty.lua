@@ -134,22 +134,16 @@ rm:addParam{ type=ULib.cmds.NumArg, min = 0, default = 0, hint = "seconds", ULib
 rm:defaultAccess(ULib.ACCESS_ADMIN)
 rm:help("Clears the entities of and jails the target(s).")
 
-local to_ban_reasons = {}
-local to_ban_ids = {}
-local to_ban_times = {}
-local to_ban_revoked = {}
-local to_ban_callers = {}
-
 hook.Add("PlayerDisconnected", "Toast_Ban_On_Disconnect", function(ply)
 	local tag = tonumber(getTag(ply))
 
 	if (ply:IsListenServerHost() or ply:IsBot()) then return end
-	if (to_ban_revoked[tag] == nil or to_ban_revoked[tag] == true) then return end
+	if not ply.due_for_ban then return end
 
-	local caller = to_ban_callers[tag]
-	local id = to_ban_ids[tag]
-	local time = to_ban_times[tag]
-	local reason = to_ban_reasons[tag]
+	local caller = ply
+	local id = ply:SteamID()
+	local time = ply.due_for_ban.time
+	local reason = ply.due_for_ban.reason
 
 	local tstring = "for #s"
 	if (time == 0) then
@@ -162,7 +156,7 @@ hook.Add("PlayerDisconnected", "Toast_Ban_On_Disconnect", function(ply)
 	end
 
 	--Some of this code was pulled from ULX
-	ulx.fancyLogAdmin(caller, "#A banned <#s> " .. tstring .. rsn .. " on disconnect.",
+	ulx.fancyLogAdmin(caller, "#A <#s> was banned " .. tstring .. rsn .. " on disconnect.",
 			id,
 			time ~= 0 and ULib.secondsToStringTime( time * 60 ) or reason,
 			reason
@@ -171,19 +165,16 @@ hook.Add("PlayerDisconnected", "Toast_Ban_On_Disconnect", function(ply)
 	ULib.queueFunctionCall(ULib.addBan, id, time, reason, id, caller)
 end)
 
-function toast.disconnect_ban(caller, target, time, reason, undo)
-	local tag = tonumber(getTag(target))
-
+function toast.disconnect_ban(caller, target, t, r, undo)
 	if not undo then
-		if (target:IsValid() and !target:IsBot()) then
-			to_ban_ids[tag] = target:SteamID()
-		else
-			to_ban_ids[tag] = "0"
+		if not (target:IsValid() and !target:IsBot()) then
+			return
 		end
-		to_ban_reasons[tag] = reason
-		to_ban_times[tag] = time
-		to_ban_revoked[tag] = false
-		to_ban_callers[tag] = caller
+
+		target.due_for_ban = {
+			time = t,
+			reason = r
+		}
 
 		local tstring = "for #s"
 		if (time == 0) then
@@ -197,11 +188,12 @@ function toast.disconnect_ban(caller, target, time, reason, undo)
 
 		ulx.fancyLogAdmin(caller, "#A will ban #T " .. tstring .. rsn .. " on disconnect", target, time~=0 and ULib.secondsToStringTime(time*60) or reason, reason)
 	else
-		if to_ban_revoked[tag] == nil or to_ban_revoked[tag] then
+		if not target.due_for_ban then
 			ULib.tsayError(caller, "This player is not due for banning", true)
 			return
 		end
-		to_ban_revoked[tag] = true
+
+		target.due_for_ban = nil
 
 		ulx.fancyLogAdmin(caller, "#A revoked the ban on #T", target)
 	end
