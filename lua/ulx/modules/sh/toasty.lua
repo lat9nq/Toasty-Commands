@@ -113,6 +113,7 @@ playwith:defaultAccess(ULib.ACCESS_ADMIN)
 playwith:help("Does quite a few things to a target...")
 playwith:setOpposite("ulx unplaywith", {_, _, _, true}, "!unplaywith")
 
+
 function toast.rm(caller, targets, time)
 	--local targets = { target }
 	local entities = ents.GetAll()
@@ -396,6 +397,56 @@ pgag:defaultAccess(ULib.ACCESS_ADMIN)
 pgag:help("Gags the targets using pdata")
 pgag:setOpposite("ulx unpgag", {_, _, true}, "!unpgag")
 
+local shakespeare_quotes = {
+	"Cowards die many times before their deaths; The valiant never taste of death but once.",
+	"I love you with so much of my heart that none is left to protest.",
+	"Thou art a very ragged Wart.",
+	"Is this a dagger which I see before me...",
+	"That it should come to this!",
+	"Do you think I am easier to be played on than a pipe?",
+	"Alas, poor Yorick! I knew him, Horatio...",
+	"I do desire we may be better strangers.",
+	"Away! Thou'rt poison to my blood.",
+	"O thou vile one!",
+	"Take you me for a sponge?",
+	"More of your conversation would infect my brain.",
+	"A horse! a horse! my kingdom for a horse!",
+	"Off with his head!",
+	"Et tu, Brute!",
+	"Such antics do not amount to a man.",
+	"They were devils incarnate.",
+	"Hag of all despite!",
+	"Out, dunghill!",
+	"You are strangely troublesome.",
+	"You blocks, you stones, you worse than senseless things!",
+	"Thou mis-shapen dick!"
+}
+
+function toast.shakesban(caller, target, time)
+
+	local tstring = "for #s"
+	local id = target:SteamID()
+	local reason = shakespeare_quotes[math.floor(math.rand(1, #shakespeare_quotes))]
+
+	if (time == 0) then
+		tstring = "permanently"
+	end
+
+	ulx.fancyLogAdmin(caller, "#A banned #T " .. tstring .. " (#s)",
+			target,
+			time ~= 0 and ULib.secondsToStringTime(time * 60) or reason,
+			reason)
+	
+	--print(reason)
+
+	ULib.queueFunctionCall(ULib.addBan, id, time, reason, id, caller)
+end
+local shakesban = ulx.command(CATEGORY_NAME, "ulx shakesban", toast.shakesban, "!shakesban")
+shakesban:addParam{ type=ULib.cmds.PlayerArg }
+shakesban:addParam{ type=ULib.cmds.NumArg, min = 0, default = 0, hint = "minutes, 0 for perma", ULib.cmds.optional, ULib.allowTimeStirng }
+shakesban:defaultAccess(ULib.ACCESS_ADMIN)
+shakesban:help("Bans the target with a quote from Shakespeare.")
+
 hook.Add("PlayerInitialSpawn", "TAM_IsPGagged", function(ply)
 	if (ply:GetPData("permgagged") == true) then
 		for _, p in pairs(player.GetAll()) do
@@ -425,3 +476,4 @@ hook.Add("PlayerCanHearPlayersVoice", "TAM_PGagTalk", function(listener, talker)
 	end
 end)
 -- end reference
+
