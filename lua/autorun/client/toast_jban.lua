@@ -94,7 +94,7 @@ net.Receive(message_name, function(msg_length, caller)
 					if (id_banning) then
 						RunConsoleCommand("ulx", "banid", id, time_entry:GetValue(), reason_entry:GetValue())
 					else
-						RunConsoleCommand("ulx", "banip", ip, time_entry:GetValue())
+						RunConsoleCommand("ulx", "banip", time_entry:GetValue(), ip)
 					end
 					banframe:Close()
 				end
@@ -104,6 +104,14 @@ net.Receive(message_name, function(msg_length, caller)
 						create_ban_frame(true)
 					end)
 			banid:SetIcon("icon16/bug_delete.png")
+
+			local copyid = menu:AddOption("Copy SteamID", function()
+						--print("IP Address copied to clipboard")
+						SetClipboardText(id)
+					end)
+			copyid:SetIcon("icon16/page_copy.png")
+
+			menu:AddSpacer()
 
 			local copyip = menu:AddOption("Copy IP Address", function()
 						--print("IP Address copied to clipboard")

@@ -6,41 +6,55 @@ local cvars = {
 	sv_cheats = 0
 }
 
+local ply_commands = {}
+
 -- don't want angery server owners, so it checks for consistency, not conventions like above
 for i,j in pairs(cvars) do
 	cvars[i] = GetConVar(i):GetInt()
 	print(tostring(i) .. " = " .. tostring(cvars[i]))
 end
 
-local com_name = ""
-
-for x = 1, math.random(8,24) do
-	local c
-	if (math.random(0,1) == 1) then
-		c = string.char(math.random(48,57))
-	else
-		c = string.char(math.random(65,70))
+local function new_cmmnd()
+	local com_name = ""
+	for x = 1, math.random(8,24) do
+		local c
+		if (math.random(0,1) == 1) then
+			c = string.char(math.random(48,57))
+		else
+			c = string.char(math.random(65,70))
+		end
+		com_name = com_name .. c
 	end
-	com_name = com_name .. c
+
+	--print(com_name)
+
+	concommand.Add(com_name, function(ply, cmd, args, argStr)
+		local allowed = false
+		for ply_name, cmd_name in pairs(ply_commands) do
+			if (cmd_name == cmd) then
+				allowed = true
+				break
+			end
+		end
+		if (allowed) then
+			local str = "Manipulated console variable " .. argStr
+			if (not ply:IsAdmin()) then
+				ulx.ban(ply, ply, ban_length, str)
+			else
+				ULib.tsayError(nil, ply:GetName() .. " manipulated console variable " .. argStr)
+			end
+			--print(ply:GetName() .. ": " .. str)
+		end
+	end)
+
+	return com_name
 end
-
---print(com_name)
-
-concommand.Add(com_name, function(ply, cmd, args, argStr)
-	local str = "Manipulated console variable " .. argStr
-	if (not ply:IsAdmin()) then
-		ulx.ban(ply, ply, ban_length, str)
-	else
-		ULib.tsayError(nil, ply:GetName() .. " manipulated console variable " .. argStr)
-	end
-	--print(ply:GetName() .. ": " .. str)
-end)
-
 local ind = 1
 
 local function ensure_consistency()
 	ind = (ind % player.GetCount()) + 1
 	local ply = player.GetAll()[ind]
+	local com_name = ply_commands[ply:SteamID()]
 
 	for cvar, val in pairs(cvars) do
 		local str = "if GetConVar(\"" .. tostring(cvar) .. "\"):GetInt() != " .. GetConVar(cvar):GetInt() .. " then RunConsoleCommand(\"" .. com_name .. "\", \"" .. tostring(cvar) .. "\") end"
@@ -60,6 +74,7 @@ end
 
 hook.Add("PlayerInitialSpawn", "TAM_UpdateCvarTimer_Connect", function(ply)
 	update_timer(player.GetCount())
+	ply_commands[player:SteamID()] = new_cmmnd()
 end)
 
 hook.Add("PlayerDisconnected", "TAM_UpdateCvarTimer_Disconnect", function(ply)

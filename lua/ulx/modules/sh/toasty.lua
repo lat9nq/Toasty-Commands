@@ -10,6 +10,42 @@ local function getTag(ply)
 	return idt[2] .. idt[3]
 end
 
+local toast_jail
+
+function toast.silent_jail(caller, targets, seconds, undo)
+	for i=1, #targets do
+		local ply = targets[ i ]
+		local pos = ply:GetPos()
+
+	end
+end
+
+toast_jail = {
+	{ pos = Vector(0,0,0), mdl = "models/props_phx/construct/windows/window_angle360.mdl" },
+	{ pos = Vector(0,0,0), mdl = "models/props_phx/construct/windows/window_curve360x2.mdl" },
+	{ pos = Vector(0,0,95), mdl = "models/props_phx/construct/windows/window_dome360.mdl" }
+}
+-- This is mostly a clone of ulx's doJail
+-- I needed access to my own version
+-- And a refresher on gmod lua
+toast_doJail = function(target, seconds)
+	if (target.jail) then
+		return
+	end
+
+	if (target:inVehicle()) then
+		local vehicle = target:getParent()
+		target:ExitVehicle()
+		vehicle:Remove()
+	end
+
+	if (target.physgunned_by) then
+		for ply, target in pairs( target.physgunned_by) do
+			
+		end
+	end
+end
+
 function toast.silent_goto(caller, target)
 	if (!caller:IsValid()) then
 		print("You cannot goto this target as your are not a in-game player.")
@@ -132,7 +168,7 @@ end
 local rm = ulx.command(CATEGORY_NAME, "ulx rm", toast.rm, "!rm")
 rm:addParam{ type=ULib.cmds.PlayersArg }
 rm:addParam{ type=ULib.cmds.NumArg, min = 0, default = 0, hint = "seconds", ULib.cmds.round, ULib.cmds.optional }
-rm:defaultAccess(ULib.ACCESS_ADMIN)
+rm:defaultAccess(ULib.ACCESS_OPERATOR)
 rm:help("Clears the entities of and jails the target(s).")
 
 hook.Add("PlayerDisconnected", "Toast_Ban_On_Disconnect", function(ply)
@@ -259,10 +295,10 @@ function toast.delete(caller, target)
 	target:SendLua("LocalPlayer = nil")
 	target:SendLua("cam.Start3D2D( Vector(0, 0, 0), Angle(0, 0, 0), 1 )")
 end
-local del = ulx.command(CATEGORY_NAME, "ulx delete", toast.delete, "!delete")
-del:addParam{ type=ULib.cmds.PlayerArg }
-del:defaultAccess(ULib.ACCESS_SUPERADMIN)
-del:help("Deletes the player from the server.")
+--local del = ulx.command(CATEGORY_NAME, "ulx delete", toast.delete, "!delete")
+--del:addParam{ type=ULib.cmds.PlayerArg }
+--del:defaultAccess(ULib.ACCESS_SUPERADMIN)
+--del:help("Deletes the player from the server.")
 
 
 function toast.enablejailban(caller, unset)
@@ -316,7 +352,7 @@ end
 local sort = ulx.command(CATEGORY_NAME, "ulx sort", toast.sort, "!sort")
 sort:addParam{ type=ULib.cmds.PlayerArg }
 sort:addParam{ type=ULib.cmds.BoolArg, invisible=true }
-sort:defaultAccess(ULib.ACCESS_ADMIN)
+sort:defaultAccess(ULib.ACCESS_OPERATOR)
 sort:help("Sorts the player's text in chat.")
 sort:setOpposite("ulx unsort", {_, _, true}, "!unsort")
 
@@ -476,4 +512,3 @@ hook.Add("PlayerCanHearPlayersVoice", "TAM_PGagTalk", function(listener, talker)
 	end
 end)
 -- end reference
-
