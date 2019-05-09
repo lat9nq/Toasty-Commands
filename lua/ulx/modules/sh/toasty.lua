@@ -441,7 +441,6 @@ local shakespeare_quotes = {
 	"That it should come to this!",
 	"Do you think I am easier to be played on than a pipe?",
 	"Alas, poor Yorick! I knew him, Horatio...",
-	"I do desire we may be better strangers.",
 	"Away! Thou'rt poison to my blood.",
 	"O thou vile one!",
 	"Take you me for a sponge?",
@@ -455,7 +454,8 @@ local shakespeare_quotes = {
 	"Out, dunghill!",
 	"You are strangely troublesome.",
 	"You blocks, you stones, you worse than senseless things!",
-	"Thou mis-shapen dick!"
+	"Thou mis-shapen dick!",
+	"I do desire we may be better strangers."
 }
 
 function toast.shakesban(caller, target, time)

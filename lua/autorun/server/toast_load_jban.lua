@@ -3,7 +3,7 @@ local filename = "toast_jban.txt"
 local message_name = "toast_jban"
 
 local function load_jban_records(past)
-	local f = file.Open("toast_jban.txt", "r", "DATA")
+	local f = file.Open(filename,"r", "DATA")
 	if not f then return end
 
 	local size = f:Size()
@@ -17,6 +17,8 @@ local function load_jban_records(past)
 	if not past then
 		util.AddNetworkString(message_name)
 	end
+
+	print("toast_load_jban.lua: Success!")
 end
 
 hook.Add("InitPostEntity", "LoadJBanRecords", load_jban_records)
