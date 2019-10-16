@@ -68,7 +68,7 @@ local timer_name = "TAM_Check_CVars"
 local function update_timer(count)
 	timer.Remove(timer_name)
 	if (count > 0) then
-		timer.Create(timer_name, 1.000/count, 0, ensure_consistency)
+		timer.Create(timer_name, 5.000/count, 0, ensure_consistency)
 	end
 end
 
