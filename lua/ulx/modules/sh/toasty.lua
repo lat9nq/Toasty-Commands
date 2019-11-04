@@ -219,11 +219,11 @@ function toast.disconnect_ban(caller, target, t, r, undo)
 		end
 		local rsn = ""
 
-		if (reason and reason ~= "") then
+		if (r and r ~= "") then
 			rsn = " (#s)"
 		end
 
-		ulx.fancyLogAdmin(caller, "#A will ban #T " .. tstring .. rsn .. " on disconnect", target, time~=0 and ULib.secondsToStringTime(time*60) or reason, reason)
+		ulx.fancyLogAdmin(caller, "#A will ban #T " .. tstring .. rsn .. " on disconnect", target, time~=0 and ULib.secondsToStringTime(time*60) or r, r)
 	else
 		if not target.due_for_ban then
 			ULib.tsayError(caller, "This player is not due for banning", true)
@@ -408,30 +408,53 @@ hook.Add("PlayerSay", "TAM_PMuteSay", function(ply)
 	end
 end)
 
-function toast.pgag(caller, targets, unpgag)
-	local val = !unpgag
-	if unpgag == true then val = nil end
-	for _, p in pairs(targets) do
-		if (p:IsValid()) then
-			p:SetPData("permgagged", val)
-			p.perma_gagged = val
+if (not ulx.pgag) then
+	function toast.pgag(caller, targets, unpgag)
+		local val = !unpgag
+		if unpgag == true then val = nil end
+		for _, p in pairs(targets) do
+			if (p:IsValid()) then
+				p:SetPData("permgagged", val)
+				p.perma_gagged = val
+			end
 		end
-	end
 
-	local str = "#A "
-	if (unpgag) then
-		str = str .. "un-"
-	end
-	str = str .. "permanently gagged #T"
+		local str = "#A "
+		if (unpgag) then
+			str = str .. "un-"
+		end
+		str = str .. "permanently gagged #T"
 
-	ulx.fancyLogAdmin(caller, str, targets)
+		ulx.fancyLogAdmin(caller, str, targets)
+	end
+	local pgag = ulx.command(CATEGORY_NAME, "ulx pgag", toast.pgag, "!pgag")
+	pgag:addParam{ type=ULib.cmds.PlayersArg }
+	pgag:addParam{ type=ULib.cmds.BoolArg, invisible=true }
+	pgag:defaultAccess(ULib.ACCESS_ADMIN)
+	pgag:help("Gags the targets using pdata")
+	pgag:setOpposite("ulx unpgag", {_, _, true}, "!unpgag")
+
+	hook.Add("PlayerInitialSpawn", "TAM_IsPGagged", function(ply)
+		if (ply:GetPData("permgagged") == true) then
+			for _, p in pairs(player.GetAll()) do
+				if p:IsAdmin() then
+					ULib.tsayError(p, ply:GetName() .. " has joined the server and is permanently gagged!")
+				end
+			end
+		end
+		ply.perm_gagged = true
+	end)
+
+	hook.Add("PlayerDisconnected", "TAM_IsPGagged_Disconnect", function(ply)
+		if (ply.perma_gagged) then
+			for _, p in pairs(player.GetAll()) do
+				if p:IsAdmin() then
+					ULib.tsayError(p, ply:GetName() .. " has left the server and is permanently gagged!")
+				end
+			end
+		end
+	end)
 end
-local pgag = ulx.command(CATEGORY_NAME, "ulx pgag", toast.pgag, "!pgag")
-pgag:addParam{ type=ULib.cmds.PlayersArg }
-pgag:addParam{ type=ULib.cmds.BoolArg, invisible=true }
-pgag:defaultAccess(ULib.ACCESS_ADMIN)
-pgag:help("Gags the targets using pdata")
-pgag:setOpposite("ulx unpgag", {_, _, true}, "!unpgag")
 
 local shakespeare_quotes = {
 	"Cowards die many times before their deaths; The valiant never taste of death but once.",
@@ -482,27 +505,6 @@ shakesban:addParam{ type=ULib.cmds.PlayerArg }
 shakesban:addParam{ type=ULib.cmds.NumArg, min = 0, default = 0, hint = "minutes, 0 for perma", ULib.cmds.optional, ULib.allowTimeStirng }
 shakesban:defaultAccess(ULib.ACCESS_ADMIN)
 shakesban:help("Bans the target with a quote from Shakespeare.")
-
-hook.Add("PlayerInitialSpawn", "TAM_IsPGagged", function(ply)
-	if (ply:GetPData("permgagged") == true) then
-		for _, p in pairs(player.GetAll()) do
-			if p:IsAdmin() then
-				ULib.tsayError(p, ply:GetName() .. " has joined the server and is permanently gagged!")
-			end
-		end
-	end
-	ply.perm_gagged = true
-end)
-
-hook.Add("PlayerDisconnected", "TAM_IsPGagged_Disconnect", function(ply)
-	if (ply.perma_gagged) then
-		for _, p in pairs(player.GetAll()) do
-			if p:IsAdmin() then
-				ULib.tsayError(p, ply:GetName() .. " has left the server and is permanently gagged!")
-			end
-		end
-	end
-end)
 
 -- the following was referenced from Custom ULX Commands by Cobalt77
 
