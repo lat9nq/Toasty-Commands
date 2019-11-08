@@ -214,7 +214,7 @@ function toast.disconnect_ban(caller, target, t, r, undo)
 		}
 
 		local tstring = "for #s"
-		if (time == 0) then
+		if (t == 0) then
 			tstring = "permanently"
 		end
 		local rsn = ""
@@ -223,7 +223,7 @@ function toast.disconnect_ban(caller, target, t, r, undo)
 			rsn = " (#s)"
 		end
 
-		ulx.fancyLogAdmin(caller, "#A will ban #T " .. tstring .. rsn .. " on disconnect", target, time~=0 and ULib.secondsToStringTime(time*60) or r, r)
+		ulx.fancyLogAdmin(caller, "#A will ban #T " .. tstring .. rsn .. " on disconnect", target, t~=0 and ULib.secondsToStringTime(t*60) or r, r)
 	else
 		if not target.due_for_ban then
 			ULib.tsayError(caller, "This player is not due for banning", true)
