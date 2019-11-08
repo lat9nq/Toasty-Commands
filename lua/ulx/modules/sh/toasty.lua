@@ -408,53 +408,51 @@ hook.Add("PlayerSay", "TAM_PMuteSay", function(ply)
 	end
 end)
 
-if (not ulx.pgag) then
-	function toast.pgag(caller, targets, unpgag)
-		local val = !unpgag
-		if unpgag == true then val = nil end
-		for _, p in pairs(targets) do
-			if (p:IsValid()) then
-				p:SetPData("permgagged", val)
-				p.perma_gagged = val
-			end
+function toast.pgag(caller, targets, unpgag)
+	local val = !unpgag
+	if unpgag == true then val = nil end
+	for _, p in pairs(targets) do
+		if (p:IsValid()) then
+			p:SetPData("permgagged", val)
+			p.perma_gagged = val
 		end
-
-		local str = "#A "
-		if (unpgag) then
-			str = str .. "un-"
-		end
-		str = str .. "permanently gagged #T"
-
-		ulx.fancyLogAdmin(caller, str, targets)
 	end
-	local pgag = ulx.command(CATEGORY_NAME, "ulx pgag", toast.pgag, "!pgag")
-	pgag:addParam{ type=ULib.cmds.PlayersArg }
-	pgag:addParam{ type=ULib.cmds.BoolArg, invisible=true }
-	pgag:defaultAccess(ULib.ACCESS_ADMIN)
-	pgag:help("Gags the targets using pdata")
-	pgag:setOpposite("ulx unpgag", {_, _, true}, "!unpgag")
 
-	hook.Add("PlayerInitialSpawn", "TAM_IsPGagged", function(ply)
-		if (ply:GetPData("permgagged") == true) then
-			for _, p in pairs(player.GetAll()) do
-				if p:IsAdmin() then
-					ULib.tsayError(p, ply:GetName() .. " has joined the server and is permanently gagged!")
-				end
-			end
-		end
-		ply.perm_gagged = true
-	end)
+	local str = "#A "
+	if (unpgag) then
+		str = str .. "un-"
+	end
+	str = str .. "permanently gagged #T"
 
-	hook.Add("PlayerDisconnected", "TAM_IsPGagged_Disconnect", function(ply)
-		if (ply.perma_gagged) then
-			for _, p in pairs(player.GetAll()) do
-				if p:IsAdmin() then
-					ULib.tsayError(p, ply:GetName() .. " has left the server and is permanently gagged!")
-				end
-			end
-		end
-	end)
+	ulx.fancyLogAdmin(caller, str, targets)
 end
+local pgag = ulx.command(CATEGORY_NAME, "ulx pgag", toast.pgag, "!pgag")
+pgag:addParam{ type=ULib.cmds.PlayersArg }
+pgag:addParam{ type=ULib.cmds.BoolArg, invisible=true }
+pgag:defaultAccess(ULib.ACCESS_ADMIN)
+pgag:help("Gags the targets using pdata")
+pgag:setOpposite("ulx unpgag", {_, _, true}, "!unpgag")
+
+hook.Add("PlayerInitialSpawn", "TAM_IsPGagged", function(ply)
+	if (ply:GetPData("permgagged") == true) then
+		for _, p in pairs(player.GetAll()) do
+			if p:IsAdmin() then
+				ULib.tsayError(p, ply:GetName() .. " has joined the server and is permanently gagged!")
+			end
+		end
+	end
+	ply.perm_gagged = true
+end)
+
+hook.Add("PlayerDisconnected", "TAM_IsPGagged_Disconnect", function(ply)
+	if (ply.perma_gagged) then
+		for _, p in pairs(player.GetAll()) do
+			if p:IsAdmin() then
+				ULib.tsayError(p, ply:GetName() .. " has left the server and is permanently gagged!")
+			end
+		end
+	end
+end)
 
 local shakespeare_quotes = {
 	"Cowards die many times before their deaths; The valiant never taste of death but once.",
