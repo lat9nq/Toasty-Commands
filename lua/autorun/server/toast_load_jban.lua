@@ -2,6 +2,8 @@ include("ulx/modules/sh/toast_jban.lua")
 local filename = "toast_jban.txt"
 local message_name = "toast_jban"
 
+util.AddNetworkString(message_name)
+
 local function load_jban_records(past)
 	local f = file.Open(filename,"r", "DATA")
 	if not f then return end

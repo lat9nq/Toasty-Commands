@@ -1,4 +1,3 @@
-toast = {}
 joins = {}
 local file_name = "toast_jban.txt"
 local CATEGORY_NAME = "Toasty"
@@ -14,7 +13,7 @@ local function num_to_ascii(s)
 	return str
 end
 
-function toast.jban(caller)
+function ulx.jban(caller)
 	--[[local key = ""
 	local c = ""
 	math.randomseed((SysTime() - math.floor(SysTime()))*1000000)
@@ -35,7 +34,7 @@ function toast.jban(caller)
 	--PrintTable(joins)
 	net.Send(caller)
 end
-local jban = ulx.command(CATEGORY_NAME, "ulx jban", toast.jban, "!jban", true)
+local jban = ulx.command(CATEGORY_NAME, "ulx jban", ulx.jban, "!jban", true)
 jban:defaultAccess(ULib.ACCESS_ADMIN)
 jban:help("Allows banning anyone who joined in the last 24 hours")
 

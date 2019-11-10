@@ -1,5 +1,4 @@
 local CATEGORY_NAME = "Toasty"
-toast = {}
 
 local function getTag(ply)
 	if (!(ply:IsValid() and not ply:IsBot())) then
@@ -12,7 +11,7 @@ end
 
 local toast_jail
 
-function toast.silent_jail(caller, targets, seconds, undo)
+function ulx.silent_jail(caller, targets, seconds, undo)
 	for i=1, #targets do
 		local ply = targets[ i ]
 		local pos = ply:GetPos()
@@ -46,7 +45,7 @@ toast_doJail = function(target, seconds)
 	end
 end
 
-function toast.silent_goto(caller, target)
+function ulx.silent_goto(caller, target)
 	if (!caller:IsValid()) then
 		print("You cannot goto this target as your are not a in-game player.")
 		return
@@ -63,21 +62,21 @@ function toast.silent_goto(caller, target)
 	--print(caller:GetName() .. " silently teleported to " .. target:GetName())
 	ulx.fancyLogAdmin(caller, true, "#A silently teleported to #T" , target)
 end
-local sgoto = ulx.command(CATEGORY_NAME, "ulx sgoto", toast.silent_goto, "!sgoto", true)
+local sgoto = ulx.command(CATEGORY_NAME, "ulx sgoto", ulx.silent_goto, "!sgoto", true)
 sgoto:addParam{ type=ULib.cmds.PlayerArg, target="!^", ULib.cmds.ignoreCanTarget }
 sgoto:defaultAccess(ULib.ACCESS_OPERATOR)
 sgoto:help("Goto target without chat relay.")
 
-function toast.silent_strip(caller, target)
+function ulx.silent_strip(caller, target)
 	target:StripWeapons()
 	ulx.fancyLogAdmin(caller, true, "#A silently stripped the weapons of #T" , target)
 end
-local sstrip = ulx.command(CATEGORY_NAME, "ulx sstrip", toast.silent_strip, "!sstrip", true)
+local sstrip = ulx.command(CATEGORY_NAME, "ulx sstrip", ulx.silent_strip, "!sstrip", true)
 sstrip:addParam{ type=ULib.cmds.PlayerArg }
 sstrip:defaultAccess(ULib.ACCESS_ADMIN)
 sstrip:help("Silently strip the weapons of a target.")
 
-function toast.temp_gag(caller, target, time)
+function ulx.temp_gag(caller, target, time)
 
 	target.ulx_gagged = true
 	target:SetNWBool("ulx_gagged", false)
@@ -92,7 +91,7 @@ function toast.temp_gag(caller, target, time)
 
 	ulx.fancyLogAdmin(caller, "#A gagged #T for #i seconds", target, time)
 end
-local tgag = ulx.command(CATEGORY_NAME, "ulx tgag", toast.temp_gag, "!tgag")
+local tgag = ulx.command(CATEGORY_NAME, "ulx tgag", ulx.temp_gag, "!tgag")
 tgag:addParam{ type=ULib.cmds.PlayerArg }
 tgag:addParam{ type=ULib.cmds.NumArg, min = 1, default = 60, hint = "seconds", ULib.cmds.round, ULib.cmds.optional }
 tgag:defaultAccess(ULib.ACCESS_OPERATOR)
@@ -100,7 +99,7 @@ tgag:help("Temporarily gags the target")
 
 local MUTE = 2
 
-function toast.temp_mute(caller, target, time)
+function ulx.temp_mute(caller, target, time)
 
 	target.gimp = MUTE
 	target:SetNWBool("ulx_muted", false)
@@ -115,13 +114,13 @@ function toast.temp_mute(caller, target, time)
 
 	ulx.fancyLogAdmin(caller, "#A muted #T for #i seconds", target, time)
 end
-local tmute = ulx.command(CATEGORY_NAME, "ulx tmute", toast.temp_mute, "!tmute")
+local tmute = ulx.command(CATEGORY_NAME, "ulx tmute", ulx.temp_mute, "!tmute")
 tmute:addParam{ type=ULib.cmds.PlayerArg }
 tmute:addParam{ type=ULib.cmds.NumArg, min = 1, default = 60, hint = "seconds", ULib.cmds.round, ULib.cmds.optional }
 tmute:defaultAccess(ULib.ACCESS_OPERATOR)
 tmute:help("Temporarily mutes the target")
 
-function toast.playwith(caller, target, time, should_stop)
+function ulx.playwith(caller, target, time, should_stop)
 	local targets = { target }
 
 	if (!should_stop) then
@@ -137,11 +136,11 @@ function toast.playwith(caller, target, time, should_stop)
 
 	if (time > 0 and not should_stop) then
 		timer.Create("playwith_"..target:GetName().."_"..tostring(math.floor(SysTime())), time, 1, function ()
-			toast.playwith(caller, target, 0, true)
+			ulx.playwith(caller, target, 0, true)
 		end )
 	end
 end
-local playwith = ulx.command(CATEGORY_NAME, "ulx playwith", toast.playwith, "!playwith")
+local playwith = ulx.command(CATEGORY_NAME, "ulx playwith", ulx.playwith, "!playwith")
 playwith:addParam{ type=ULib.cmds.PlayerArg }
 playwith:addParam{ type=ULib.cmds.NumArg, min = 0, default = 0, hint = "seconds", ULib.cmds.round, ULib.cmds.optional }
 playwith:addParam{ type=ULib.cmds.BoolArg, invisible=true }
@@ -150,7 +149,7 @@ playwith:help("Does quite a few things to a target...")
 playwith:setOpposite("ulx unplaywith", {_, _, _, true}, "!unplaywith")
 
 
-function toast.rm(caller, targets, time)
+function ulx.rm(caller, targets, time)
 	--local targets = { target }
 	local entities = ents.GetAll()
 
@@ -165,7 +164,7 @@ function toast.rm(caller, targets, time)
 	ulx.jail(caller, targets, time, false)
 	ulx.fancyLogAdmin(caller, "#A removed all entities from #T", targets)
 end
-local rm = ulx.command(CATEGORY_NAME, "ulx rm", toast.rm, "!rm")
+local rm = ulx.command(CATEGORY_NAME, "ulx rm", ulx.rm, "!rm")
 rm:addParam{ type=ULib.cmds.PlayersArg }
 rm:addParam{ type=ULib.cmds.NumArg, min = 0, default = 0, hint = "seconds", ULib.cmds.round, ULib.cmds.optional }
 rm:defaultAccess(ULib.ACCESS_OPERATOR)
@@ -202,7 +201,7 @@ hook.Add("PlayerDisconnected", "Toast_Ban_On_Disconnect", function(ply)
 	ULib.queueFunctionCall(ULib.addBan, id, time, reason, id, caller)
 end)
 
-function toast.disconnect_ban(caller, target, t, r, undo)
+function ulx.disconnect_ban(caller, target, t, r, undo)
 	if not undo then
 		if not (target:IsValid() and !target:IsBot()) then
 			return
@@ -235,7 +234,7 @@ function toast.disconnect_ban(caller, target, t, r, undo)
 		ulx.fancyLogAdmin(caller, "#A revoked the ban on #T", target)
 	end
 end
-local dscban = ulx.command(CATEGORY_NAME, "ulx dscban", toast.disconnect_ban, "!dscban")
+local dscban = ulx.command(CATEGORY_NAME, "ulx dscban", ulx.disconnect_ban, "!dscban")
 dscban:addParam{ type=ULib.cmds.PlayerArg }
 dscban:addParam{ type=ULib.cmds.NumArg, hint="minutes, 0 for perma", ULib.cmds.optional, ULib.allowTimeString, min=0 }
 dscban:addParam{ type=ULib.cmds.StringArg, hint="reason", ULib.cmds.optional, ULib.cmds.takeRestOfLine, completes=ulx.common_kick_reasons }
@@ -244,7 +243,7 @@ dscban:defaultAccess(ULib.ACCESS_ADMIN)
 dscban:help("Bans the target when they disconnect.")
 dscban:setOpposite("ulx undscban", { _, _, _, _, true }, "!undscban")
 
-function toast.fuckup(caller, targets, undo)
+function ulx.fuckup(caller, targets, undo)
 	local roll = 180
 	if undo then roll = 0 end
 
@@ -262,14 +261,14 @@ function toast.fuckup(caller, targets, undo)
 
 	ulx.fancyLogAdmin(caller, true, "#A " .. str .. " #T", targets)
 end
-local fu = ulx.command(CATEGORY_NAME, "ulx fu", toast.fuckup, "!fu", true)
+local fu = ulx.command(CATEGORY_NAME, "ulx fu", ulx.fuckup, "!fu", true)
 fu:addParam{ type=ULib.cmds.PlayersArg }
 fu:addParam{ type=ULib.cmds.BoolArg, invisible=true }
 fu:defaultAccess(ULib.ACCESS_ADMIN)
 fu:help("Inverts the viewport for the target. Resets when they die.")
 fu:setOpposite("ulx unfu", { _, _, true }, "!unfu")
 
-function toast.alle2s(caller)
+function ulx.alle2s(caller)
 	local es = ents.GetAll()
 
 	for _, e in pairs(es) do
@@ -284,24 +283,24 @@ function toast.alle2s(caller)
 		end
 	end
 end
-local alle2s = ulx.command(CATEGORY_NAME, "ulx alle2s", toast.alle2s, "!alle2s", true)
+local alle2s = ulx.command(CATEGORY_NAME, "ulx alle2s", ulx.alle2s, "!alle2s", true)
 alle2s:defaultAccess(ULib.ACCESS_OPERATOR)
 alle2s:help("Prints out all the Expression 2 chips spawned in the server.")
 
-function toast.delete(caller, target)
+function ulx.delete(caller, target)
 	ulx.fancyLogAdmin(caller, "#A deleted #T", target)
 
 	-- the following code is taken from https://gmod.facepunch.com/f/gmoddev/mjea/How-to-crash-a-player-s-game-or-his-computer/1/
 	target:SendLua("LocalPlayer = nil")
 	target:SendLua("cam.Start3D2D( Vector(0, 0, 0), Angle(0, 0, 0), 1 )")
 end
---local del = ulx.command(CATEGORY_NAME, "ulx delete", toast.delete, "!delete")
+--local del = ulx.command(CATEGORY_NAME, "ulx delete", ulx.delete, "!delete")
 --del:addParam{ type=ULib.cmds.PlayerArg }
 --del:defaultAccess(ULib.ACCESS_SUPERADMIN)
 --del:help("Deletes the player from the server.")
 
 
-function toast.enablejailban(caller, unset)
+function ulx.enablejailban(caller, unset)
 	toast_auto_ban = not unset
 	local str = "#A "
 
@@ -321,13 +320,13 @@ function toast.enablejailban(caller, unset)
 
 	ulx.fancyLogAdmin(caller, str)
 end
-local ejb = ulx.command(CATEGORY_NAME, "ulx enablejailban", toast.enablejailban, nil)
+local ejb = ulx.command(CATEGORY_NAME, "ulx enablejailban", ulx.enablejailban, nil)
 ejb:addParam{ type=ULib.cmds.BoolArg, invisible = true }
 ejb:defaultAccess(ULib.ACCESS_SUPERADMIN)
 ejb:help("Enables/Disables auto-banning for leaving during jail.")
 ejb:setOpposite("ulx disablejailban", {_, true}, nil)
 
-function toast.sort(caller, target, unset)
+function ulx.sort(caller, target, unset)
 	local changed = false
 
 	if not target.sort and not unset then
@@ -349,14 +348,14 @@ function toast.sort(caller, target, unset)
 		ulx.fancyLogAdmin(caller, str, target)
 	end
 end
-local sort = ulx.command(CATEGORY_NAME, "ulx sort", toast.sort, "!sort")
+local sort = ulx.command(CATEGORY_NAME, "ulx sort", ulx.sort, "!sort")
 sort:addParam{ type=ULib.cmds.PlayerArg }
 sort:addParam{ type=ULib.cmds.BoolArg, invisible=true }
 sort:defaultAccess(ULib.ACCESS_OPERATOR)
 sort:help("Sorts the player's text in chat.")
 sort:setOpposite("ulx unsort", {_, _, true}, "!unsort")
 
-function toast.pmute(caller, targets, unpmute)
+function ulx.pmute(caller, targets, unpmute)
 	local val = !unpmute
 	if unpmute == true then val = nil end
 	for _, p in pairs(targets) do
@@ -374,7 +373,7 @@ function toast.pmute(caller, targets, unpmute)
 
 	ulx.fancyLogAdmin(caller, str, targets)
 end
-local pmute = ulx.command(CATEGORY_NAME, "ulx pmute", toast.pmute, "!pmute")
+local pmute = ulx.command(CATEGORY_NAME, "ulx pmute", ulx.pmute, "!pmute")
 pmute:addParam{ type=ULib.cmds.PlayersArg }
 pmute:addParam{ type=ULib.cmds.BoolArg, invisible=true }
 pmute:defaultAccess(ULib.ACCESS_ADMIN)
@@ -408,7 +407,7 @@ hook.Add("PlayerSay", "TAM_PMuteSay", function(ply)
 	end
 end)
 
-function toast.pgag(caller, targets, unpgag)
+function ulx.pgag(caller, targets, unpgag)
 	local val = !unpgag
 	if unpgag == true then val = nil end
 	for _, p in pairs(targets) do
@@ -426,7 +425,7 @@ function toast.pgag(caller, targets, unpgag)
 
 	ulx.fancyLogAdmin(caller, str, targets)
 end
-local pgag = ulx.command(CATEGORY_NAME, "ulx pgag", toast.pgag, "!pgag")
+local pgag = ulx.command(CATEGORY_NAME, "ulx pgag", ulx.pgag, "!pgag")
 pgag:addParam{ type=ULib.cmds.PlayersArg }
 pgag:addParam{ type=ULib.cmds.BoolArg, invisible=true }
 pgag:defaultAccess(ULib.ACCESS_ADMIN)
@@ -479,7 +478,7 @@ local shakespeare_quotes = {
 	"I do desire we may be better strangers."
 }
 
-function toast.shakesban(caller, target, time)
+function ulx.shakesban(caller, target, time)
 
 	local tstring = "for #s"
 	local id = target:SteamID()
@@ -498,7 +497,7 @@ function toast.shakesban(caller, target, time)
 
 	ULib.queueFunctionCall(ULib.addBan, id, time, reason, id, caller)
 end
-local shakesban = ulx.command(CATEGORY_NAME, "ulx shakesban", toast.shakesban, "!shakesban")
+local shakesban = ulx.command(CATEGORY_NAME, "ulx shakesban", ulx.shakesban, "!shakesban")
 shakesban:addParam{ type=ULib.cmds.PlayerArg }
 shakesban:addParam{ type=ULib.cmds.NumArg, min = 0, default = 0, hint = "minutes, 0 for perma", ULib.cmds.optional, ULib.allowTimeStirng }
 shakesban:defaultAccess(ULib.ACCESS_ADMIN)
