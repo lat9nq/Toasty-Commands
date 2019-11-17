@@ -326,6 +326,23 @@ ejb:defaultAccess(ULib.ACCESS_SUPERADMIN)
 ejb:help("Enables/Disables auto-banning for leaving during jail.")
 ejb:setOpposite("ulx disablejailban", {_, true}, nil)
 
+hook.Add("PlayerSay", "toastSort", function(ply, strText, bTeam)
+	if (ply.sort and not ply:GetNWBool("ulx_gimped") and not ply:GetNWBool("ulx_muted")) then
+		local result = ""
+		local c = string.char(-1)
+		for i = 31, 126 do
+			c = string.char(i)
+			for j = 0, string.len(strText) do
+				local x = string.sub(strText, j, j)
+				if (c == x) then
+					result = result .. x
+				end
+			end
+		end
+		return result
+	end
+end)
+
 function ulx.sort(caller, target, unset)
 	local changed = false
 
