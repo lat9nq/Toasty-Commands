@@ -398,14 +398,14 @@ pmute:help("Mutes the targets using pdata")
 pmute:setOpposite("ulx unpmute", {_, _, true}, "!unpmute")
 
 hook.Add("PlayerInitialSpawn", "TAM_IsPMuted", function(ply)
-	if (ply:GetPData("permmuted") == true) then
+	if (ply:GetPData("permmuted", nil)) then
 		for _, p in pairs(player.GetAll()) do
 			if p:IsAdmin() then
 				ULib.tsayError(p, ply:GetName() .. " has joined the server and is permanently muted!")
 			end
 		end
+		ply.perma_muted = true
 	end
-	ply.perma_muted = true
 end)
 
 hook.Add("PlayerDisconnected", "TAM_IsPMuted_Disconnect", function(ply)
@@ -450,14 +450,14 @@ pgag:help("Gags the targets using pdata")
 pgag:setOpposite("ulx unpgag", {_, _, true}, "!unpgag")
 
 hook.Add("PlayerInitialSpawn", "TAM_IsPGagged", function(ply)
-	if (ply:GetPData("permgagged") == true) then
+	if (ply:GetPData("permgagged")) then
 		for _, p in pairs(player.GetAll()) do
 			if p:IsAdmin() then
 				ULib.tsayError(p, ply:GetName() .. " has joined the server and is permanently gagged!")
 			end
 		end
+		ply.perma_gagged = true
 	end
-	ply.perm_gagged = true
 end)
 
 hook.Add("PlayerDisconnected", "TAM_IsPGagged_Disconnect", function(ply)
