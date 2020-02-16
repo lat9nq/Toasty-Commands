@@ -405,7 +405,7 @@ hook.Add("PlayerInitialSpawn", "TAM_IsPMuted", function(ply)
 			end
 		end
 	end
-	ply.perm_muted = true
+	ply.perma_muted = true
 end)
 
 hook.Add("PlayerDisconnected", "TAM_IsPMuted_Disconnect", function(ply)
