@@ -528,3 +528,21 @@ hook.Add("PlayerCanHearPlayersVoice", "TAM_PGagTalk", function(listener, talker)
 	end
 end)
 -- end reference
+
+
+-- Credits to Tristan885, with modifications
+local function ulx.uptime(caller)
+	the_time = SysTime()
+	str = string.format(
+		"%d:%02d:%02d",
+		math.floor(the_time / 3600),
+		math.floor(the_time % 3600 / 60),
+		math.floor(the_time % 3600 % 60)
+	)
+
+	ulx.fancyLog("The server has been running for #s.", str)
+end
+local uptime = ulx.command( CATEGORY_NAME, "ulx uptime", ulx.uptime, "!uptime")
+uptime:defaultAccess(ULib.ACCESS_OPERATOR)
+uptime:help("Prints the server uptime.")
+
